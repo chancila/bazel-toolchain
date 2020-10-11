@@ -117,6 +117,7 @@ filegroup(
     srcs = glob([
         "include/c++/**",
         "lib/clang/%{llvm_version}/include/**",
+        "lib/clang/%{llvm_version}/share/asan_blacklist.txt",
     ]),
 )
 
@@ -142,6 +143,30 @@ filegroup(
         ":include",
         ":sysroot_components",
     ],
+)
+
+filegroup(
+    name = "asan_runtime_components",
+    srcs = glob([
+      "lib/clang/%{llvm_version}/lib/**/libclang_rt.asan*",
+    ]),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "tsan_runtime_components",
+    srcs = glob([
+      "lib/clang/%{llvm_version}/lib/**/libclang_rt.tsan*",
+    ]),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "lsan_runtime_components",
+    srcs = glob([
+      "lib/clang/%{llvm_version}/lib/**/libclang_rt.lsan*",
+    ]),
+    visibility = ["//visibility:public"],
 )
 
 filegroup(
