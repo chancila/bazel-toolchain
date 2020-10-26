@@ -126,7 +126,7 @@ filegroup(
     srcs = glob(
         [
             "lib/lib*.a",
-            "lib/clang/%{llvm_version}/lib/**/*.a",
+            "lib/clang/%{llvm_version}/lib/**/*",
         ],
         exclude = [
             "lib/libLLVM*.a",

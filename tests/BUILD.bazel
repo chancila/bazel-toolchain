@@ -34,3 +34,27 @@ sh_test(
         "@llvm_toolchain//:lib/libc++.a",
     ],
 )
+
+cc_test(
+    name = "test_asan",
+    srcs = ["sanitizer_stub.cpp"],
+    copts = ["-fsanitize=address"],
+    data = ["@llvm_toolchain//:asan_runtime_components"],
+    linkopts = ["-fsanitize=address"],
+)
+
+cc_test(
+    name = "test_tsan",
+    srcs = ["sanitizer_stub.cpp"],
+    copts = ["-fsanitize=thread"],
+    data = ["@llvm_toolchain//:tsan_runtime_components"],
+    linkopts = ["-fsanitize=thread"],
+)
+
+cc_test(
+    name = "test_lsan",
+    srcs = ["sanitizer_stub.cpp"],
+    copts = ["-fsanitize=leak"],
+    data = ["@llvm_toolchain//:lsan_runtime_components"],
+    linkopts = ["-fsanitize=leak"],
+)
