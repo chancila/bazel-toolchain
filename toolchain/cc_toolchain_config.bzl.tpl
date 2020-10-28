@@ -31,6 +31,20 @@ load(
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 
 def _impl(ctx):
+    print(ctx.attr.extra)
+    print(ctx.attr.extra.label)
+    print(ctx.attr.extra.label.package)
+    print(ctx.attr.extra.label.workspace_root)
+
+    print(ctx.genfiles_dir.path)
+
+    # this is a bit janky to illustrate the issue in the cc header resolution actions
+    # but one can imagine we can use a better rule with a provider
+    # that would tell us an accurate include path for the headers it generates
+    extra_include_dir = ctx.genfiles_dir.path + "/" + ctx.attr.extra.label.workspace_root + "/" + ctx.attr.extra.label.package
+
+    print(extra_include_dir)
+
     if (ctx.attr.cpu == "darwin"):
         toolchain_identifier = "clang-darwin"
     elif (ctx.attr.cpu == "k8"):
@@ -249,6 +263,8 @@ def _impl(ctx):
                             "-Wall",
                             "-Wthread-safety",
                             "-Wself-assign",
+                            "-isystem",
+                            extra_include_dir,
                         ],
                     ),
                 ],
@@ -499,6 +515,8 @@ def _impl(ctx):
         features.extend([framework_paths_feature])
 
     cxx_builtin_include_directories = [
+        # note this doesn't do anything one way or the other
+        "%workspace%/" + extra_include_dir,
         "%{toolchain_path_prefix}include/c++/v1",
         "%{toolchain_path_prefix}lib/clang/%{llvm_version}/include",
         "%{toolchain_path_prefix}lib64/clang/%{llvm_version}/include",
@@ -649,6 +667,7 @@ cc_toolchain_config = rule(
                 "k8",
             ],
         ),
+        "extra": attr.label(),
     },
     executable = True,
     provides = [CcToolchainConfigInfo],

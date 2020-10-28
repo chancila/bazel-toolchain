@@ -21,6 +21,10 @@ exports_files(["Makevars"])
 # Some targets may need to directly depend on these files.
 exports_files(glob(["bin/*", "lib/*"]))
 
+genrule(name = "genheader",
+        outs = ["cc_test_header.h"],
+        cmd = "echo 'int foo() { return 42; }' > $@")
+
 filegroup(
     name = "empty",
     srcs = [],
@@ -56,6 +60,7 @@ cc_toolchain_config(
 cc_toolchain_config(
     name = "local_darwin",
     cpu = "darwin",
+    extra = ":genheader",
 )
 
 toolchain(
@@ -141,6 +146,7 @@ filegroup(
         ":clang",
         ":include",
         ":sysroot_components",
+        ":genheader",
     ],
 )
 
