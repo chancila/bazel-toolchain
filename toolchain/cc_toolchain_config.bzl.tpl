@@ -31,6 +31,16 @@ load(
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 
 def _impl(ctx):
+    print(ctx.attr.extra)
+    print(ctx.attr.extra.label)
+    print(ctx.attr.extra.label.package)
+    print(ctx.attr.extra.label.workspace_root)
+
+    print(ctx.genfiles_dir.path)
+
+    extra_include_dir = ctx.genfiles_dir.path + "/" + ctx.attr.extra.label.workspace_root + "/" + ctx.attr.extra.label.package
+    print(extra_include_dir)
+
     if (ctx.attr.cpu == "darwin"):
         toolchain_identifier = "clang-darwin"
     elif (ctx.attr.cpu == "k8"):
@@ -249,6 +259,8 @@ def _impl(ctx):
                             "-Wall",
                             "-Wthread-safety",
                             "-Wself-assign",
+                            "-isystem",
+                            extra_include_dir,
                         ],
                     ),
                 ],
@@ -649,6 +661,7 @@ cc_toolchain_config = rule(
                 "k8",
             ],
         ),
+        "extra": attr.label(),
     },
     executable = True,
     provides = [CcToolchainConfigInfo],
