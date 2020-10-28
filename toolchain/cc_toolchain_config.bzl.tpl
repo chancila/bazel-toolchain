@@ -38,7 +38,11 @@ def _impl(ctx):
 
     print(ctx.genfiles_dir.path)
 
+    # this is a bit janky to illustrate the issue in the cc header resolution actions
+    # but one can imagine we can use a better rule with a provider
+    # that would tell us an accurate include path for the headers it generates
     extra_include_dir = ctx.genfiles_dir.path + "/" + ctx.attr.extra.label.workspace_root + "/" + ctx.attr.extra.label.package
+
     print(extra_include_dir)
 
     if (ctx.attr.cpu == "darwin"):
@@ -511,6 +515,8 @@ def _impl(ctx):
         features.extend([framework_paths_feature])
 
     cxx_builtin_include_directories = [
+        # note this doesn't do anything one way or the other
+        "%workspace%/" + extra_include_dir,
         "%{toolchain_path_prefix}include/c++/v1",
         "%{toolchain_path_prefix}lib/clang/%{llvm_version}/include",
         "%{toolchain_path_prefix}lib64/clang/%{llvm_version}/include",
